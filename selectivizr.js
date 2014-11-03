@@ -33,7 +33,7 @@ References:
 	var doc = document;
 	var root = doc.documentElement;
 	var xhr = "XMLHttpRequest";
-	var ieVersion = doc.querySelector ? doc.documentMode : (doc.compatMode === "CSS1Compat" ? xhr in win ? 7 : 6 : 5);
+	var ieVersion = doc.querySelector ? doc.documentMode : doc.compatMode === "CSS1Compat" ? xhr in win ? 7 : 6 : 5;
 
 	// String constants
 	var EMPTY_STRING						= "";
@@ -47,13 +47,13 @@ References:
 	var js_path								= (doc.scripts ? doc.scripts[doc.scripts.length - 1] : doc.querySelector("script:last-child")).getAttribute("src").replace(/[^\/]+$/, "");
 	var ajaxCache							= {};
 	if (!(ieVersion > 5 && ieVersion < 10)) {
-		if(!win.StyleFix) {
-			loadScript(js_path + "prefixfree.min.js").onload = function(){
+		if (!win.StyleFix) {
+			loadScript(js_path + "prefixfree.min.js").onload = function() {
 				var addEvent = win.addEventListener,
 					tester = doc.createElement("div"),
 					process = StyleFix.process;
-				tester.style.cssText = "font-size:calc(1vmax*100000)";
-				if(!/vmax/.test(tester.style.fontSize)){
+				tester.style.cssText = "font-size:calc(1vmax*1)";
+				if (!/vmax/.test(tester.style.fontSize)) {
 					StyleFix.register(vunits);
 					addEvent("resize", process);
 				}
@@ -182,7 +182,7 @@ References:
 				cssText = vunits(cssText);
 				if (ieVersion < 9) {
 					cssText = cssText.replace(/\b(\d+(\.\d+)?)rem\b/g, function(s, num) {
-						return (num * rem[1]) + rem[2];
+						return num * rem[1] + rem[2];
 					});
 					// call media.match.js see https://github.com/reubenmoes/media-match */
 					if (win.styleMedia) {
@@ -552,7 +552,7 @@ References:
 	}
 
 	// --[ loadStyleSheet() ]-----------------------------------------------
-	function loadStyleSheet( url ) {
+	function loadStyleSheet(url) {
 		var cssText = ajaxCache[url];
 
 		if (win.jQuery) {
@@ -705,8 +705,7 @@ References:
 								e.disabled = false;
 								e.$disabled = true;
 								e.disabled = true;
-							}
-							else {
+							} else {
 								e.$disabled = e.disabled;
 							}
 						}
@@ -715,23 +714,20 @@ References:
 			}
 		}
 	}
-
-	if(ieVersion < 8){
+	if (ieVersion < 8) {
 		pie_path = "behavior: expression(window.PIE&&PIE.attach_ie67&&PIE.attach_ie67(this));";
-	} else if(loadStyleSheet(pie_path)) {
+	} else if (loadStyleSheet(pie_path)) {
 		pie_path = "behavior: url(" + pie_path + ");";
 	} else {
 		pie_path = EMPTY_STRING;
 	}
-
-	if(pie_path && !win.PIE){
-		js_path += "PIE_IE" + ( ieVersion < 9 ? "678" : "9" ) + ".js";
+	if (pie_path && !win.PIE) {
+		js_path += "PIE_IE" + (ieVersion < 9 ? "678" : "9") + ".js";
 		loadScript(js_path);
 	}
-
 	// Determine the baseUrl and download the stylesheets
 	var baseTags = doc.getElementsByTagName("BASE");
-	var baseUrl = (baseTags.length > 0) ? baseTags[0].href : doc.location.href;
+	var baseUrl = baseTags.length > 0 ? baseTags[0].href : doc.location.href;
 	getStyleSheets();
 
 	addEvent(win, "resize", setLengthUnits);
@@ -754,7 +750,6 @@ References:
 		init();
 	});
 
-
 	/*!
 	 * ContentLoaded.js by Diego Perini, modified for IE<9 only (to save space)
 	 *
@@ -773,34 +768,35 @@ References:
 	// @w window reference
 	// @f function reference
 	function contentLoaded(fn) {
-		if(win.jQuery){
+		if (win.jQuery) {
 			return jQuery(fn);
 		}
 		var isReady = false;
+
 		function completed() {
 			// readyState === "complete" is good enough for us to call the dom ready in oldIE
-			if ( !isReady ) {
+			if (!isReady) {
 				isReady = true;
 				fn();
 			}
 		}
-		if ( isDocComplete() ) {
+		if (isDocComplete()) {
 			// Handle it asynchronously to allow scripts the opportunity to delay ready
 			setTimeout(completed);
 
 		// Standards-based browsers support DOMContentLoaded
-		} else if ( doc.addEventListener ) {
+		} else if (doc.addEventListener) {
 			// Use the handy event callback
-			doc.addEventListener( "DOMContentLoaded", completed, false );
+			doc.addEventListener("DOMContentLoaded", completed, false);
 
 		// If IE event model is used
 		} else {
 			// Ensure firing before onload, maybe late but safe also for iframes
-			doc.attachEvent( "onreadystatechange", function(){
-				if( isDocComplete() ){
+			doc.attachEvent("onreadystatechange", function() {
+				if (isDocComplete()) {
 					completed();
 				}
-			} );
+			});
 
 			// If IE and not a frame
 			// continually check to see if the document is ready
@@ -808,18 +804,17 @@ References:
 
 			try {
 				top = !win.frameElement && root;
-			} catch(e) {}
+			} catch (e) {}
 
-			if ( top && top.doScroll ) {
+			if (top && top.doScroll) {
 				(function doScrollCheck() {
-					if ( !isReady ) {
-
+					if (!isReady) {
 						try {
 							// Use the trick by Diego Perini
 							// http://javascript.nwbox.com/IEContentLoaded/
 							top.doScroll("left");
-						} catch(e) {
-							return setTimeout( doScrollCheck, 50 );
+						} catch (e) {
+							return setTimeout(doScrollCheck, 50);
 						}
 
 						// and execute any waiting functions
