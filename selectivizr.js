@@ -52,7 +52,7 @@ References:
 				var addEvent = win.addEventListener,
 					tester = doc.createElement("div"),
 					process = StyleFix.process;
-				tester.style.cssText = "font-size:calc(1vmax*100000)";
+				tester.style.cssText = "font-size:calc(1vmax*1)";
 				if (!/vmax/.test(tester.style.fontSize)) {
 					StyleFix.register(vunits);
 					addEvent("resize", process);
