@@ -24,7 +24,7 @@ References:
 
 */
 
-/*global jQuery: false, PIE: false, StyleFix: false, ActiveXObject: false, styleMedia: false */
+/*global jQuery: false, PIE: false, StyleFix: false, ActiveXObject: false, styleMedia: false, CSSStyleDeclaration: false, PrefixFree: false */
 
 (function(win) {
 	"use strict";
