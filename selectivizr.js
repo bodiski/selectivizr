@@ -24,7 +24,7 @@ References:
 
 */
 
-/*global jQuery: false, PIE: false, StyleFix: false, ActiveXObject: false, styleMedia: false */
+/*global jQuery: false, PIE: false, StyleFix: false, ActiveXObject: false, styleMedia: false, CSSStyleDeclaration: false, PrefixFree: false */
 
 (function(win) {
 	"use strict";
@@ -58,6 +58,9 @@ References:
 					addEvent("resize", process);
 				}
 				process();
+				PrefixFree.properties.forEach(function(property) {
+					stylePropertyFix(StyleFix.camelCase(property), PrefixFree.prefixProperty(property, true));
+				});
 			};
 		}
 		return;
@@ -714,13 +717,30 @@ References:
 			}
 		}
 	}
-	if (ieVersion < 8) {
-		pie_path = "behavior: expression(window.PIE&&PIE.attach_ie67&&PIE.attach_ie67(this));";
-	} else if (loadStyleSheet(pie_path)) {
-		pie_path = "behavior: url(" + pie_path + ");";
-	} else {
-		pie_path = EMPTY_STRING;
+
+	function stylePropertyFix(property, prefixProperty) {
+		Object.defineProperty(CSSStyleDeclaration.prototype, property, {
+			get: function() {
+				return this[prefixProperty];
+			},
+			set: function(val) {
+				this[prefixProperty] = val;
+			},
+			enumerable: false
+		});
 	}
+
+	if (ieVersion > 8) {
+		stylePropertyFix("transform", "msTransform");
+		stylePropertyFix("transformOrigin", "msTransformOrigin");
+	} else {
+		if (ieVersion < 8) {
+			pie_path = "behavior: expression(window.PIE&&PIE.attach_ie67&&PIE.attach_ie67(this));";
+		} else {
+			pie_path = "behavior: url(" + pie_path + ");";
+		}
+	}
+
 	if (pie_path && !win.PIE) {
 		js_path += "PIE_IE" + (ieVersion < 9 ? "678" : "9") + ".js";
 		loadScript(js_path);
